@@ -8,3 +8,9 @@ authors = ["Adam Fitzgerald"]
 
 [dependencies]
 ipnet = "2.9.0"
+ipnetwork = "*"
+dns-lookup = "*"
+
+[[bin]]
+name = "subnetcheck"
+path = "src/subnetcheck.rs"

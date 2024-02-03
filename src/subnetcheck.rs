@@ -1,11 +1,11 @@
 use std::env;
-//use std::net::{Ipv4Addr};
 use ipnet::{Ipv4Net, Ipv6Net};
+use dns_lookup::lookup_addr;
 
 fn main() {
     // Get prefix from the user
     if let Some(prefix) = env::args().nth(1) {
-        print!("Supplied prefix is: {}\n", prefix);
+        print!("Supplied input is: {}\n", prefix);
 
         // function result
         let v4_network: bool = valid_ipv4_subnet(&prefix);
@@ -21,7 +21,7 @@ fn main() {
         }
         // Prefix is netiher ipv4 or ipv6
         else {
-            println!("Invalid IPv4 / IPv6 subnet provided.")
+            println!("Invalid IPv4 / IPv6 subnet provided.  Must be a valid CIDR block slash notation")
         }
     }
     // No prefix supplied branch
