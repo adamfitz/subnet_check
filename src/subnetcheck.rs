@@ -1,6 +1,6 @@
-use std::env;
-use ipnet::{Ipv4Net, Ipv6Net, Ipv4AddrRange, IpNet};
-//use dns_lookup::lookup_addr;
+use std::{env};
+use ipnet::{Ipv4Net, Ipv6Net, IpNet};
+use dns_lookup::lookup_addr;
 
 fn main() {
     // Get prefix from the user
@@ -11,15 +11,18 @@ fn main() {
         let v4_network: bool = valid_ipv4_subnet(&prefix);
         let v6_network: bool = valid_ipv6_subnet(&prefix);
 
+        // prefix supplied is IPv4
         if v4_network == true {
-            // prefix supplied ipv4 
-            println!("IPv4 subnet provided.");
-            let ipv4_host_ips = ipv4_hosts(&prefix);
-            println!("{:?}", ipv4_host_ips);
-
 
             // get the number of hosts in the subnet.
+            let ipv4_host_ips = ipv4_hosts(&prefix);
+            println!("IPv4 subnet provided is valid: {:?}", ipv4_host_ips);
 
+            // iterate all hosts
+            for address in ipv4_host_ips.hosts(){
+                let ptr = lookup_addr(&address).unwrap();
+                println!("{} - {}", address, ptr)
+            }
         }
         else if v6_network == true {
             println!("IPv6 subnet provided.")
@@ -27,7 +30,7 @@ fn main() {
         }
         // Prefix is netiher ipv4 or ipv6
         else {
-            println!("Invalid IPv4 / IPv6 subnet provided.  Must be a valid CIDR block slash notation")
+            println!("Invalid IPv4 / IPv6 subnet provided.  Supplied prefix MUST be valid CIDR Notation.")
         }
     }
     // No prefix supplied branch
@@ -47,17 +50,10 @@ fn valid_ipv6_subnet(prefix:&str)-> bool{
 }
 
 // function returns the number of hosts in an Ipv4 subnet
-fn ipv4_hosts(prefix:&str){
-    //let hosts = Ipv4Net(prefix)
+fn ipv4_hosts(prefix:&str) -> IpNet{
 
-    // create a network object from the given prefix?
-    let net: IpNet = prefix.parse().unwrap();
+    // create a network object from the given prefix
+    let ipv4_net: IpNet = prefix.parse().unwrap();
 
-    println!("{}", net);
-
-    // Yay this works! :)
-    for i in net.hosts(){
-        println!("{}", i);
-    }
-    //let num_hosts = Ipv4AddrRange::new(prefix.parse().unwrap());
+    return ipv4_net
 }
