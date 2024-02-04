@@ -1,19 +1,25 @@
 use std::env;
-use ipnet::{Ipv4Net, Ipv6Net};
-use dns_lookup::lookup_addr;
+use ipnet::{Ipv4Net, Ipv6Net, Ipv4AddrRange, IpNet};
+//use dns_lookup::lookup_addr;
 
 fn main() {
     // Get prefix from the user
     if let Some(prefix) = env::args().nth(1) {
         print!("Supplied input is: {}\n", prefix);
 
-        // function result
+        // validate user input
         let v4_network: bool = valid_ipv4_subnet(&prefix);
         let v6_network: bool = valid_ipv6_subnet(&prefix);
 
         if v4_network == true {
             // prefix supplied ipv4 
-            println!("IPv4 subnet provided.")
+            println!("IPv4 subnet provided.");
+            let ipv4_host_ips = ipv4_hosts(&prefix);
+            println!("{:?}", ipv4_host_ips);
+
+
+            // get the number of hosts in the subnet.
+
         }
         else if v6_network == true {
             println!("IPv6 subnet provided.")
@@ -30,12 +36,28 @@ fn main() {
     }
 }
 
+// function checks if a valid IPv4 subnet
 fn valid_ipv4_subnet(prefix:&str)-> bool{
-    // pass in the user supplied prefix, check if it is a validate IPv4 subnet
     prefix.parse::<Ipv4Net>().is_ok()
 }
 
+// function checks if a valid IPv6 subnet
 fn valid_ipv6_subnet(prefix:&str)-> bool{
-    // pass in the user supplied prefix, check if it is a validate IPv6 subnet
     prefix.parse::<Ipv6Net>().is_ok()
+}
+
+// function returns the number of hosts in an Ipv4 subnet
+fn ipv4_hosts(prefix:&str){
+    //let hosts = Ipv4Net(prefix)
+
+    // create a network object from the given prefix?
+    let net: IpNet = prefix.parse().unwrap();
+
+    println!("{}", net);
+
+    // Yay this works! :)
+    for i in net.hosts(){
+        println!("{}", i);
+    }
+    //let num_hosts = Ipv4AddrRange::new(prefix.parse().unwrap());
 }
