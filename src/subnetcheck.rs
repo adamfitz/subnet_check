@@ -20,19 +20,28 @@ fn main() {
 
             // iterate all hosts
             for address in ipv4_host_ips.hosts(){
-                let ptr = lookup_addr(&address).unwrap();
-                println!("{} - {}", address, ptr)
+                // attempt reverse lookup and ignore the error (no PTR exists)
+                //TODO:  Catch the specific lookup error otherwise panic
+                match lookup_addr(&address) {
+                    Ok(ptr) => {
+                        println!("{} - {}", address, ptr);
+                    },
+                    Err(_) => {
+                        println!("No PTR returned for - {}", address);
+                    }
+                }
             }
         }
+
         else if v6_network == true {
             println!("IPv6 subnet provided.")
-
         }
+
         // Prefix is netiher ipv4 or ipv6
         else {
             println!("Invalid IPv4 / IPv6 subnet provided.  Supplied prefix MUST be valid CIDR Notation.")
         }
-    }
+        }
     // No prefix supplied branch
     else {
         println!("A valid IPv4 or Ipv6 prefix in CIDR notation must be supplied!\nExample: \'subnetcheck 10.0.0.0/24\'")
