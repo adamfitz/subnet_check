@@ -27,7 +27,7 @@ fn main() {
                         println!("{} - {}", address, ptr);
                     },
                     Err(_) => {
-                        println!("No PTR returned for - {}", address);
+                        continue;
                     }
                 }
             }
