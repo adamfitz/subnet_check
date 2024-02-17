@@ -1,6 +1,10 @@
-use std::{env};
+use std::env;
 use ipnet::{Ipv4Net, Ipv6Net, IpNet};
 use dns_lookup::lookup_addr;
+use hickory_resolver::Resolver;
+use hickory_resolver::config::*;
+
+
 
 fn main() {
     // Get prefix from the user
@@ -34,6 +38,20 @@ fn main() {
         }
 
         else if v6_network == true {
+            // repeat for ipv6
+            let ipv6_host_ips = ipv6_hosts(&prefix);
+            println!("IPv6 subnet provided is valid: {:?}", ipv6_host_ips);
+            println!("IPv6 hosts object: {:?}", ipv6_host_ips.hosts());
+
+            // create new resolver with default config
+            let resolver = Resolver::new(ResolverConfig::default(), ResolverOpts::default()).unwrap();
+
+            // iterate v6 hosts and return PTRs
+            for ipv6_address in ipv6_host_ips.hosts(){
+                println!("{:?}", ipv6_address);
+                //let ipv6_ptr = resolver.lookup_ip(ipv6_address.to_string());
+            }
+
             println!("IPv6 subnet provided.")
         }
 
@@ -65,4 +83,13 @@ fn ipv4_hosts(prefix:&str) -> IpNet{
     let ipv4_net: IpNet = prefix.parse().unwrap();
 
     return ipv4_net
+}
+
+// function returns the number of hosts in an Ipv6 subnet
+fn ipv6_hosts(prefix:&str) -> Ipv6Net{
+
+    // create a network object from the given prefix
+    let ipv6_net: Ipv6Net = prefix.parse().unwrap();
+
+    return ipv6_net
 }
