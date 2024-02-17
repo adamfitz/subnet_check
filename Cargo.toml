@@ -10,6 +10,7 @@ authors = ["Adam Fitzgerald"]
 ipnet = "2.9.0"
 ipnetwork = "*"
 dns-lookup = "*"
+hickory-resolver = "*"
 
 [[bin]]
 name = "subnetcheck"
