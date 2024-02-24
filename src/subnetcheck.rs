@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, fs};
 use ipnet::{Ipv4Net, Ipv6Net, IpNet};
 use dns_lookup::lookup_addr;
 use local_ip_address::list_afinet_netifas;
@@ -44,6 +44,7 @@ fn main() {
             println!("IPv6 hosts object: {:?}", ipv6_host_ips.hosts());
 
             list_interfaces();
+            get_dns_server_linux();
 
 
             println!("IPv6 subnet provided.")
@@ -98,3 +99,10 @@ fn list_interfaces(){
     }
 }
 
+// read /etc/config for the dns server
+fn get_dns_server_linux() {
+    let contents = fs::read_to_string("/etc/resolv.conf").expect("Failed to open resolv.conf");
+    let config = resolv_conf::Config::parse(&contents).unwrap();
+    
+    println!("{:?}", config.nameservers); 
+}

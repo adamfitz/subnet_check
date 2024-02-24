@@ -11,6 +11,7 @@ ipnet = "2.9.0"
 ipnetwork = "*"
 dns-lookup = "*"
 local-ip-address = "*"
+resolv-conf = "*"
 
 [[bin]]
 name = "subnetcheck"
