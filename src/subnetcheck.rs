@@ -1,8 +1,8 @@
 use std::env;
 use ipnet::{Ipv4Net, Ipv6Net, IpNet};
 use dns_lookup::lookup_addr;
-use hickory_resolver::Resolver;
-use hickory_resolver::config::*;
+use local_ip_address::list_afinet_netifas;
+
 
 
 
@@ -43,14 +43,8 @@ fn main() {
             println!("IPv6 subnet provided is valid: {:?}", ipv6_host_ips);
             println!("IPv6 hosts object: {:?}", ipv6_host_ips.hosts());
 
-            // create new resolver with default config
-            let resolver = Resolver::new(ResolverConfig::default(), ResolverOpts::default()).unwrap();
+            list_interfaces();
 
-            // iterate v6 hosts and return PTRs
-            for ipv6_address in ipv6_host_ips.hosts(){
-                println!("{:?}", ipv6_address);
-                //let ipv6_ptr = resolver.lookup_ip(ipv6_address.to_string());
-            }
 
             println!("IPv6 subnet provided.")
         }
@@ -93,3 +87,14 @@ fn ipv6_hosts(prefix:&str) -> Ipv6Net{
 
     return ipv6_net
 }
+
+// list interface addresses
+
+fn list_interfaces(){
+    let network_interfaces = list_afinet_netifas().unwrap();
+
+    for (name, ip) in network_interfaces.iter() {
+        println!("{}:\t{:?}", name, ip);
+    }
+}
+
