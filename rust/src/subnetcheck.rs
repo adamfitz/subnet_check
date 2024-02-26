@@ -1,9 +1,6 @@
-use std::env;
+use std::{env, fs};
 use ipnet::{Ipv4Net, Ipv6Net, IpNet};
 use dns_lookup::lookup_addr;
-use hickory_resolver::Resolver;
-use hickory_resolver::config::*;
-
 
 
 fn main() {
@@ -43,14 +40,7 @@ fn main() {
             println!("IPv6 subnet provided is valid: {:?}", ipv6_host_ips);
             println!("IPv6 hosts object: {:?}", ipv6_host_ips.hosts());
 
-            // create new resolver with default config
-            let resolver = Resolver::new(ResolverConfig::default(), ResolverOpts::default()).unwrap();
-
-            // iterate v6 hosts and return PTRs
-            for ipv6_address in ipv6_host_ips.hosts(){
-                println!("{:?}", ipv6_address);
-                //let ipv6_ptr = resolver.lookup_ip(ipv6_address.to_string());
-            }
+            let resolver_ip:() = get_dns_server_linux();
 
             println!("IPv6 subnet provided.")
         }
@@ -92,4 +82,15 @@ fn ipv6_hosts(prefix:&str) -> Ipv6Net{
     let ipv6_net: Ipv6Net = prefix.parse().unwrap();
 
     return ipv6_net
+}
+
+// read /etc/resolv.conf for the resolver IP
+fn get_dns_server_linux() {
+    let contents = fs::read_to_string("/etc/resolv.conf").expect("Failed to open resolv.conf");
+    let config = resolv_conf::Config::parse(&contents).unwrap();
+
+    // return name servers from the local machine
+    for nameserver in &config.nameservers {
+        println!("{}", nameserver.to_string());
+    }
 }
