@@ -130,7 +130,7 @@ Warning: When large address blocks are specified the script will take some
 time to run, likewise if there are not many PTR records present/found.
 
 NOTE: It is NOT recommended to run this against a large IPv6 address block as
-there is progress indicator implemented and it will be difficult to determine 
+there is no progress indicator implemented and it will be difficult to determine 
 if the script is still running or not.
 """
 	) # the string is "de intented" on purpose to remove the default triple quote intent
