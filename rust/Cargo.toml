@@ -16,3 +16,7 @@ resolv-conf = "*"
 [[bin]]
 name = "subnetcheck"
 path = "src/subnetcheck.rs"
+
+[[bin]]
+name = "get_resolver"
+path = "src/get_resolver.rs"
