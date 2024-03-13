@@ -20,3 +20,7 @@ path = "src/subnetcheck.rs"
 [[bin]]
 name = "get_resolver"
 path = "src/get_resolver.rs"
+
+[[bin]]
+name = "get_interface_addr"
+path = "src/get_interface_addr.rs"
