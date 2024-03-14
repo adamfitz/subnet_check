@@ -1,5 +1,5 @@
 use std::env;
-use std::net::{Ipv6Addr, SocketAddr};
+use std::net::SocketAddr;
 use ipnet::{Ipv4Net, Ipv6Net, IpNet};
 use dns_lookup::lookup_addr;
 
@@ -41,7 +41,7 @@ fn main() {
             println!("IPv6 subnet provided is valid: {:?}", ipv6_host_ips);
             println!("IPv6 hosts object: {:?}", ipv6_host_ips.hosts());
             for ipv6_address in ipv6_host_ips.hosts() {
-                // lookup function does not work with Ipv6 address
+                // lookup address function does not work with Ipv6 address
                 // convert to socket address and then attempt the PTR lookup
                 let socket_addr = SocketAddr::from((ipv6_address, 0));
                 match lookup_addr(&socket_addr.ip()) {
