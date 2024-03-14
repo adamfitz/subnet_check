@@ -7,7 +7,7 @@ use dns_lookup::lookup_addr;
 fn main() {
     // Get prefix from the user
     if let Some(prefix) = env::args().nth(1) {
-        print!("Supplied input is: {}\n", prefix);
+        print!("Valid Input provided: {}\n", prefix);
 
         // validate user input
         let v4_network: bool = valid_ipv4_subnet(&prefix);
@@ -38,8 +38,8 @@ fn main() {
         else if v6_network == true {
             // repeat for ipv6
             let ipv6_host_ips = ipv6_hosts(&prefix);
-            println!("IPv6 subnet provided is valid: {:?}", ipv6_host_ips);
-            println!("IPv6 hosts object: {:?}", ipv6_host_ips.hosts());
+            println!("IPv6 start address: {}\nIPv6 End Address: {}", ipv6_host_ips.network(), ipv6_host_ips.broadcast());
+            println!("Attempting PTR lookup for the provided input, this may take some time...");
             for ipv6_address in ipv6_host_ips.hosts() {
                 // lookup address function does not work with Ipv6 address
                 // convert to socket address and then attempt the PTR lookup
