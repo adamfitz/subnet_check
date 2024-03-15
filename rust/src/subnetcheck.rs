@@ -1,5 +1,6 @@
 use std::env;
 use std::net::SocketAddr;
+use std::process::exit;
 use ipnet::{Ipv4Net, Ipv6Net, IpNet};
 use dns_lookup::lookup_addr;
 use indicatif::{ProgressBar, ProgressStyle};
@@ -40,12 +41,13 @@ fn main() {
         else if v6_network == true {
             // repeat for ipv6
             let ipv6_host_ips = ipv6_hosts(&prefix);
-            println!("IPv6 start address: {}\nIPv6 End Address: {}", ipv6_host_ips.network(), ipv6_host_ips.broadcast());
-            println!("Attempting PTR lookup for the provided input, this may take some time...");
+            //println!("IPv6 start address: {}\nIPv6 End Address: {}", ipv6_host_ips.network(), ipv6_host_ips.broadcast());
+            validate_ipv6_prefix_size(&prefix);
+            println!("Attempting reverse DNS lookup for the input {}", prefix);
 
             //implement progress bar
-            let ipv6_total_items = ipv6_host_ips.hosts().count(); // Count the total number of items
-            println!("Number of hosts: {}", ipv6_total_items.to_string());
+            let ipv6_total_items = ipv6_host_ips.hosts().count();
+            println!("Number of IPv6 hosts: {}", ipv6_total_items.to_string());
             let ipv6_progress_bar = ProgressBar::new((ipv6_total_items as u128).try_into().unwrap());
             ipv6_progress_bar.set_style(ProgressStyle::default_bar()
                 .template("[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({percent}%)")
@@ -53,18 +55,16 @@ fn main() {
 
 
             for ipv6_address in ipv6_host_ips.hosts() {
+                //increment for each iteration
+                ipv6_progress_bar.inc(1);
                 // lookup address function does not work with Ipv6 address
                 // convert to socket address and then attempt the PTR lookup
                 let socket_addr = SocketAddr::from((ipv6_address, 0));
                 match lookup_addr(&socket_addr.ip()) {
                     Ok(ipv6_ptr) => {
-                        //increment when found
-                        ipv6_progress_bar.inc(1);
                         println!("{} - {}", ipv6_address, ipv6_ptr);
                     }
                     Err(_) => {
-                        //increment when none found
-                        ipv6_progress_bar.inc(1);
                         continue;
                     }
                 }
@@ -107,4 +107,16 @@ fn ipv6_hosts(prefix:&str) -> Ipv6Net{
     let ipv6_net: Ipv6Net = prefix.parse().unwrap();
 
     ipv6_net
+}
+
+// function checks if the provided ipv6 prefix is /64 or larger and exits
+fn validate_ipv6_prefix_size(prefix: &str) {
+    if let Some(prefix_len) = prefix.split('/').nth(1) {
+        if let Ok(prefix_num) = prefix_len.parse::<u8>() {
+            if prefix_num <= 64 {
+                println!("The provided IPv6 prefix MUST be great than /64, Eg: from /65 to /128.");
+                exit(0);
+            }
+        }
+    }
 }
