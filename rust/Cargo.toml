@@ -12,6 +12,7 @@ ipnetwork = "*"
 dns-lookup = "*"
 local-ip-address = "*"
 resolv-conf = "*"
+indicatif = "0.17.8"
 
 [[bin]]
 name = "subnetcheck"
