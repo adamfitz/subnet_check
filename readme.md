@@ -3,6 +3,7 @@
 
 
 ### bash/subnectCheckv1.sh
+#### Description:
 
 Iterate though all IPv4 addresses in a /24 and output any A records found within the given subnet.
 
@@ -12,7 +13,6 @@ Iterate though all IPv4 addresses in a /24 and output any A records found within
 Takes an IPv4 or IPv6 address block in CIDR notation and return all DNS records found in that address block.
 
 ### rust/src/subnetcheck.rs
+#### Description:
 
-A small rust application to iterate through all IPs in a given address block and return any reverse DNS records found.
-
-
+Takes an IPv4 or IPv6 (/65 or greater) prefix and returns all reverse DNS records for the provided prefix.
