@@ -2,6 +2,8 @@ use std::env;
 use std::net::SocketAddr;
 use ipnet::{Ipv4Net, Ipv6Net, IpNet};
 use dns_lookup::lookup_addr;
+use indicatif::{ProgressBar, ProgressStyle};
+
 
 
 fn main() {
@@ -40,15 +42,29 @@ fn main() {
             let ipv6_host_ips = ipv6_hosts(&prefix);
             println!("IPv6 start address: {}\nIPv6 End Address: {}", ipv6_host_ips.network(), ipv6_host_ips.broadcast());
             println!("Attempting PTR lookup for the provided input, this may take some time...");
+
+            //implement progress bar
+            let ipv6_total_items = ipv6_host_ips.hosts().count(); // Count the total number of items
+            println!("Number of hosts: {}", ipv6_total_items.to_string());
+            let ipv6_progress_bar = ProgressBar::new((ipv6_total_items as u128).try_into().unwrap());
+            ipv6_progress_bar.set_style(ProgressStyle::default_bar()
+                .template("[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({percent}%)")
+                .expect("Failed to create progress style"));
+
+
             for ipv6_address in ipv6_host_ips.hosts() {
                 // lookup address function does not work with Ipv6 address
                 // convert to socket address and then attempt the PTR lookup
                 let socket_addr = SocketAddr::from((ipv6_address, 0));
                 match lookup_addr(&socket_addr.ip()) {
                     Ok(ipv6_ptr) => {
+                        //increment when found
+                        ipv6_progress_bar.inc(1);
                         println!("{} - {}", ipv6_address, ipv6_ptr);
                     }
                     Err(_) => {
+                        //increment when none found
+                        ipv6_progress_bar.inc(1);
                         continue;
                     }
                 }
