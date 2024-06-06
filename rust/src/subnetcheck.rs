@@ -16,6 +16,8 @@ fn main() {
         let v4_network: bool = valid_ipv4_subnet(&prefix);
         let v6_network: bool = valid_ipv6_subnet(&prefix);
 
+        let mut result: Vec<String> = vec![];
+
         // prefix supplied is IPv4
         if v4_network == true {
 
@@ -30,7 +32,8 @@ fn main() {
             let ipv4_progress_bar = ProgressBar::new(ipv4_total_items);
             ipv4_progress_bar.set_style(ProgressStyle::default_bar()
                 .template("[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({percent}%)")
-                .expect("Failed to create progress style"));
+                .expect("Failed to create progress style")
+                .progress_chars("#>-"));
 
             // iterate all hosts
             for address in ipv4_host_ips.hosts(){
@@ -39,7 +42,9 @@ fn main() {
                     Ok(ptr) => {
                         // increment the bar
                         ipv4_progress_bar.inc(1);
-                        println!("{} - {}", address, ptr);
+                        // concatenate the owned var address, cast to string and join with the reference to the record
+                        let output: String = address.to_string() + "\t" + &ptr;
+                        result.push(output);
                     },
                     Err(_) => {
                         // increment the bar
@@ -50,6 +55,11 @@ fn main() {
             }
             // finish progress
             ipv4_progress_bar.finish();
+            println!("DNS reverse lookup results for IPv4 subnet: {}", &prefix);
+            // iterate over the result vector printing all results
+            for address in result.iter() {
+                println!("{}", address);
+            }
         }
 
         else if v6_network == true {
@@ -65,7 +75,8 @@ fn main() {
             let ipv6_progress_bar = ProgressBar::new((ipv6_total_items as u128).try_into().unwrap());
             ipv6_progress_bar.set_style(ProgressStyle::default_bar()
                 .template("[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({percent}%)")
-                .expect("Failed to create progress style"));
+                .expect("Failed to create progress style")
+                .progress_chars("#>-"));
 
 
             for ipv6_address in ipv6_host_ips.hosts() {
@@ -74,17 +85,25 @@ fn main() {
                 let socket_addr = SocketAddr::from((ipv6_address, 0));
                 match lookup_addr(&socket_addr.ip()) {
                     Ok(ipv6_ptr) => {
-                        println!("{} - {}", ipv6_address, ipv6_ptr);
+                        // increment the bar
+                        ipv6_progress_bar.inc(1);
+                        // concatenate the owned var address, cast to string and join with the reference to the record
+                        let output: String = ipv6_address.to_string() + "\t" + &ipv6_ptr;
+                        result.push(output);
                     }
                     Err(_) => {
+                        ipv6_progress_bar.inc(1);
                         continue;
                     }
                 }
-                //increment for each iteration
-                ipv6_progress_bar.inc(1);
             }
             //finish progress
             ipv6_progress_bar.finish();
+            println!("DNS reverse lookup results for IPv6 subnet: {}", &prefix);
+            // iterate over the result vector printing all results
+            for address in result.iter() {
+                println!("{}", address);
+            }
         }
         // Prefix is netiher ipv4 or ipv6
         else {
