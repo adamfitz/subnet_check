@@ -20,22 +20,25 @@ fn main() {
 
         // prefix supplied is IPv4
         if v4_network == true {
-            // start lookup timer
-            let start = time::Instant::now();
-
             // get the number of hosts in the subnet.
             let ipv4_host_ips = ipv4_hosts(&prefix);
-            // println!("IPv4 start address: {}\nIPv4 End Address: {}", ipv4_host_ips.network(), ipv4_host_ips.broadcast());
-            println!("Attempting reverse DNS lookup for the input {}", prefix);
+
+            //print out info to the user
+            println!("\nAddress family:\t\tIPv4");
+            println!("Address block:\t\t{}", prefix);
+            println!("Subnet mask:\t\t{:?}", ipv4_host_ips.netmask());
+            println!("Total addresses:\t{}\n", ipv4_host_ips.hosts().count());
 
             // implement progress bar
             let ipv4_total_items = ipv4_host_ips.hosts().count() as u64;
-            println!("Number of IPv4 hosts: {}\n", ipv4_total_items.to_string());
             let ipv4_progress_bar = ProgressBar::new(ipv4_total_items);
             ipv4_progress_bar.set_style(ProgressStyle::default_bar()
                 .template("[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({percent}%)")
                 .expect("Failed to create progress style")
                 .progress_chars("#>-"));
+
+            // start lookup timer
+            let start = time::Instant::now();
 
             // iterate all hosts
             for address in ipv4_host_ips.hosts(){
@@ -58,17 +61,20 @@ fn main() {
             // finish progress
             ipv4_progress_bar.finish();
             // display the elapsed time
-            println!("Reverse lookup operation completed in: {:?}", start.elapsed());
-            // iterate over the result vector printing all results
-            println!("DNS reverse lookup results for IPv4 subnet: {}", &prefix);
-            for address in result.iter() {
-                println!("{}", address);
+            println!("\n\nReverse lookup operation completed in: {:?}", start.elapsed());
+            // Display the number of records returned
+            println!("Total number of DNS records found: {}", result.len());
+            // If no records are returned dont print anything
+            if result.len() > 0 {
+                // iterate over the result vector printing all results
+                println!("\nList of DNS Records found in IPv4 subnet: {}", &prefix);
+                for address in result.iter() {
+                    println!("{}", address);
+                }
             }
         }
 
         else if v6_network == true {
-            // start lookup timer
-            let start = time::Instant::now();
 
             // repeat for ipv6
             let ipv6_host_ips = ipv6_hosts(&prefix);
@@ -85,6 +91,8 @@ fn main() {
                 .expect("Failed to create progress style")
                 .progress_chars("#>-"));
 
+            // start lookup timer
+            let start = time::Instant::now();
 
             for ipv6_address in ipv6_host_ips.hosts() {
                 // lookup address function does not work with Ipv6 address
