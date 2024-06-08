@@ -10,9 +10,9 @@ Iterate though all IPv4 addresses in a /24 and output any A records found within
 ### python/subnet_check.py
 #### Description:
 
-Takes an IPv4 or IPv6 address block in CIDR notation and return all DNS records found in that address block.
+Takes an IPv4 or IPv6 address block in CIDR notation, performs a DNS lookup for all addresses in the provided prefix and returns all records found.
 
 ### rust/src/subnetcheck.rs
 #### Description:
 
-Takes an IPv4 or IPv6 (/65 or greater) prefix and returns all reverse DNS records for the provided prefix.
+Takes an IPv4 or IPv6 (/65 or greater only) prefix, performs a DNS lookup for all addresses in the provided prefix and returns all records found.
