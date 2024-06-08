@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, time};
 use std::net::SocketAddr;
 use std::process::exit;
 use ipnet::{Ipv4Net, Ipv6Net, IpNet};
@@ -20,6 +20,8 @@ fn main() {
 
         // prefix supplied is IPv4
         if v4_network == true {
+            // start lookup timer
+            let start = time::Instant::now();
 
             // get the number of hosts in the subnet.
             let ipv4_host_ips = ipv4_hosts(&prefix);
@@ -55,14 +57,19 @@ fn main() {
             }
             // finish progress
             ipv4_progress_bar.finish();
-            println!("DNS reverse lookup results for IPv4 subnet: {}", &prefix);
+            // display the elapsed time
+            println!("Reverse lookup operation completed in: {:?}", start.elapsed());
             // iterate over the result vector printing all results
+            println!("DNS reverse lookup results for IPv4 subnet: {}", &prefix);
             for address in result.iter() {
                 println!("{}", address);
             }
         }
 
         else if v6_network == true {
+            // start lookup timer
+            let start = time::Instant::now();
+
             // repeat for ipv6
             let ipv6_host_ips = ipv6_hosts(&prefix);
             //println!("IPv6 start address: {}\nIPv6 End Address: {}", ipv6_host_ips.network(), ipv6_host_ips.broadcast());
@@ -99,8 +106,10 @@ fn main() {
             }
             //finish progress
             ipv6_progress_bar.finish();
-            println!("DNS reverse lookup results for IPv6 subnet: {}", &prefix);
+            // display the elapsed time
+            println!("Reverse lookup operation completed in: {:?}", start.elapsed());
             // iterate over the result vector printing all results
+            println!("DNS reverse lookup results for IPv6 subnet: {}", &prefix);
             for address in result.iter() {
                 println!("{}", address);
             }
