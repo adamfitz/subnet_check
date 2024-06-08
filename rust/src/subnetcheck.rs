@@ -75,12 +75,17 @@ fn main() {
         }
 
         else if v6_network == true {
-
-            // repeat for ipv6
+            // get the number of hosts in the subnet.
             let ipv6_host_ips = ipv6_hosts(&prefix);
-            //println!("IPv6 start address: {}\nIPv6 End Address: {}", ipv6_host_ips.network(), ipv6_host_ips.broadcast());
+
+            //print out info to the user
+            println!("\nAddress family:\t\tIPv6");
+            println!("Address block:\t\t{}", prefix);
+            println!("Subnet mask:\t\t{:?}", ipv6_host_ips.netmask());
+            println!("Total addresses:\t{}\n", ipv6_host_ips.hosts().count());
+
+            // check th eprovided input is /65 or smaller
             validate_ipv6_prefix_size(&prefix);
-            println!("Attempting reverse DNS lookup for the input {}", prefix);
 
             //implement progress bar
             let ipv6_total_items = ipv6_host_ips.hosts().count();
@@ -112,14 +117,18 @@ fn main() {
                     }
                 }
             }
-            //finish progress
+            // finish progress
             ipv6_progress_bar.finish();
             // display the elapsed time
-            println!("Reverse lookup operation completed in: {:?}", start.elapsed());
-            // iterate over the result vector printing all results
-            println!("DNS reverse lookup results for IPv6 subnet: {}", &prefix);
-            for address in result.iter() {
-                println!("{}", address);
+            println!("\n\nReverse lookup operation completed in: {:?}", start.elapsed());
+            // Display the number of records returned
+            println!("Total number of DNS records found: {}", result.len());
+            if result.len() > 0 {
+                // iterate over the result vector printing all results
+                println!("\nList of DNS Records found in IPv6 subnet: {}", &prefix);
+                for address in result.iter() {
+                    println!("{}", address);
+                }
             }
         }
         // Prefix is netiher ipv4 or ipv6
