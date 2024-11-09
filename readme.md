@@ -16,3 +16,9 @@ Takes an IPv4 or IPv6 address block in CIDR notation, performs a DNS lookup for 
 #### Description:
 
 Takes an IPv4 or IPv6 (/65 or greater only) prefix, performs a DNS lookup for all addresses in the provided prefix and returns all records found.
+
+
+### go/subnet_check.go
+#### Description:
+
+Takes an IPv4 or IPv6 prefix, performs a DNS lookup for all addresses in the provided prefix and returns all records found.
